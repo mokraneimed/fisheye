@@ -103,10 +103,11 @@ function _chart(data,d3,width,height,drag,color,invalidation)
   const nodes = data[0].nodes.map(d => Object.create(d));
   console.log(links, data[0].links);
 
-  const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.id))
-      .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width / 2, height / 2));
+  const simulation = d3.forceSimulation(nodes) 
+  .force("link", d3.forceLink(links).id(d => d.id).distance(100)) // Increase link distance
+  .force("charge", d3.forceManyBody().strength(-300)) // Increase repulsion between nodes
+  .force("center", d3.forceCenter(width / 2, height / 2))
+  .force("collide", d3.forceCollide(20));
 
   const svg = d3.create("svg")
       .attr("viewBox", [0, 0, width, height]);
@@ -129,7 +130,7 @@ function _chart(data,d3,width,height,drag,color,invalidation)
       .call(drag(simulation));
 
   node.append('circle')
-      .attr("r", 5)
+      .attr("r", 10)
       .attr("fill", color);
   
   node.append("text")
@@ -143,7 +144,7 @@ function _chart(data,d3,width,height,drag,color,invalidation)
    .attr("text-anchor", "middle");
 
    var fisheye = d3.fisheye.circular()
-   .radius(200)
+   .radius(150)
    .distortion(2);
  
 // Modify the fisheye event handler
